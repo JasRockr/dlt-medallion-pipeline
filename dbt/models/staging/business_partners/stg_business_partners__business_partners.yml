@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: stg_business_partners__business_partners
+    description: >
+      Silver: `business_partners` (bronze) enriquecida con descripciones de
+      sus catálogos de referencia. Una fila por business partner -- misma
+      cardinalidad que bronze, ver docs/ARCHITECTURE.md sección "Capa de
+      transformación (dbt)".
+    columns:
+      - name: partner_id
+        description: Llave primaria del business partner (origen MSSQL).
+        data_tests:
+          - unique
+          - not_null
+      - name: estado_validacion_global
+        description: Estado calculado por transforms/rule_engine.py en bronze.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["OK", "ALERTA", "ERROR"]

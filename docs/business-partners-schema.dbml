@@ -1,0 +1,131 @@
+// DBML database structure - Submodelo de Business Partners y catálogos
+// asociados. Esquema ilustrativo (simplificado a los campos que el
+// contrato/motor de reglas realmente usa) para el dominio de ejemplo de
+// este pipeline — no representa el esquema real de ningún ERP concreto.
+// Database_type: 'PostgreSQL'
+
+// --- ENTIDADES DE SEGUNDO NIVEL (CATÁLOGOS DE REFERENCIA) ---
+
+Table countries {
+  country_id smallint [pk, not null]
+  iso2 varchar(2) [not null]
+  iso3 varchar(3) [not null]
+  description varchar(100) [not null]
+}
+
+Table cities {
+  city_id varchar(5) [pk, not null]
+  description varchar(100)
+  region varchar(100)
+}
+
+Table document_types {
+  document_type varchar(3) [pk, not null]
+  description varchar(100) [not null]
+  code varchar(10)
+}
+
+Table organization_types {
+  organization_type smallint [pk, not null]
+  description varchar(128) [not null]
+  code varchar(10)
+}
+
+Table tax_regimes {
+  tax_regime smallint [pk, not null]
+  description varchar(128) [not null]
+  code varchar(10)
+}
+
+Table marital_statuses {
+  marital_status varchar(3) [pk, not null]
+  description varchar(100) [not null]
+}
+
+Table partner_categories {
+  partner_category varchar(10) [pk, not null]
+  description varchar(100) [not null]
+}
+
+Table reference_lists {
+  list_id smallint [pk, not null]
+  description varchar(100) [not null]
+  discount_pct numeric(6, 5) [not null]
+}
+
+Table economic_activities {
+  economic_activity varchar(10) [pk, not null]
+  description varchar(255) [not null]
+}
+
+Table sales_zones {
+  zone_id varchar(16) [pk, not null]
+  description varchar(100) [not null]
+  enabled bit(1)
+}
+
+Table sales_reps {
+  sales_rep_id varchar(16) [pk, not null]
+  description varchar(100) [not null]
+  commission_pct numeric(6,5)
+  enabled varchar(1)
+}
+
+Table service_agents {
+  service_agent_id varchar(16) [pk, not null]
+  description varchar(100) [not null]
+  enabled varchar(1)
+}
+
+Table banks {
+  bank_id smallint [pk, not null]
+  description varchar(100) [not null]
+  bank_type varchar(1) [not null]
+  code varchar(10)
+}
+
+Table accounts {
+  account_id varchar(16) [pk, not null]
+  parent_account varchar(16)
+  natural_account bit(1)
+}
+
+Table partner_chains {
+  chain_id smallint [pk, not null]
+  description varchar(100) [not null]
+  code varchar(10)
+}
+
+
+// --- TABLA CENTRAL ---
+
+Table business_partners {
+  partner_id varchar(16) [pk, not null]
+  document_type varchar(3) [ref: > document_types.document_type]
+  full_name varchar(100) [not null]
+  first_name varchar(60)
+  middle_name varchar(60)
+  last_name varchar(60)
+  second_last_name varchar(60)
+  is_individual varchar(1)
+  partner_category varchar(10) [ref: > partner_categories.partner_category]
+  address varchar(100) [not null]
+  mobile_phone varchar(50)
+  email varchar(100)
+  city_id varchar(5) [ref: > cities.city_id]
+  country_id smallint [ref: > countries.country_id]
+  organization_type smallint [ref: > organization_types.organization_type]
+  tax_regime smallint [ref: > tax_regimes.tax_regime]
+  marital_status varchar(3) [ref: > marital_statuses.marital_status]
+  economic_activity varchar(10) [ref: > economic_activities.economic_activity]
+  zone_id varchar(16) [ref: > sales_zones.zone_id]
+  sales_rep_id varchar(16) [ref: > sales_reps.sales_rep_id]
+  service_agent_id varchar(16) [ref: > service_agents.service_agent_id]
+  bank_id smallint [ref: > banks.bank_id]
+  account_id varchar(16) [ref: > accounts.account_id]
+  list_id smallint [ref: > reference_lists.list_id]
+  chain_id smallint [ref: > partner_chains.chain_id]
+  status varchar(3)
+  created_by varchar(100)
+  created_at timestamp
+}

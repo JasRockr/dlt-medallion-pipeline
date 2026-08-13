@@ -1,0 +1,4 @@
+dlt[bigquery,sql_database]>=1.28.0
+pyodbc
+python-dotenv
+pyyaml

@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: business_partners__resumen_ejecucion
+    description: >
+      Gold: conteo de business partners y errores por check, agrupado por
+      estado de validación global. Candidato a reemplazar la vista dinámica
+      resumen_ejecucion_business_partners una vez cumpla el criterio de
+      paridad (docs/ARCHITECTURE.md).
+    columns:
+      - name: estado_validacion_global
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["OK", "ALERTA", "ERROR"]
+      - name: total_business_partners
+        data_tests:
+          - not_null

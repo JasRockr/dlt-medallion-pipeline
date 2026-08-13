@@ -1,0 +1,13 @@
+# put your configuration values here
+
+[runtime]
+log_level="WARNING"  # the system log level of dlt
+# use the dlthub_telemetry setting to enable/disable anonymous usage data reporting, see https://dlthub.com/docs/reference/telemetry
+dlthub_telemetry = true
+
+[destination.bigquery]
+location = "US"
+
+# table_names se pasa explícito en código en cada script (ver
+# smoke_test_connection.py / run_pipeline.py) en vez de aquí, para que un
+# pipeline no afecte el alcance de tablas de otro al compartir esta sección.

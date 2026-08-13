@@ -1,0 +1,20 @@
+# Copiar a profiles.yml (mismo directorio) y completar el project_id real,
+# o copiar a ~/.dbt/profiles.yml. dbt/profiles.yml está en .gitignore --
+# nunca debe subirse al repo (igual convención que .dlt/secrets.toml.example).
+#
+# method: oauth -- autenticación vía Application Default Credentials (ADC),
+# no clave JSON de cuenta de servicio. Mismo patrón que .dlt/secrets.toml
+# (ver docs/COMMANDS-PIPELINE.md sección 6). Requiere haber corrido antes:
+#   gcloud auth application-default login
+medallion_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: TU_PROJECT_ID
+      dataset: staging_business_partners  # dataset por defecto; cada modelo fija el suyo vía +schema
+      location: US
+      threads: 4
+      timeout_seconds: 300
+      priority: interactive

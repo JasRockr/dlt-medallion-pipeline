@@ -1,0 +1,47 @@
+# Manifiesto del dominio Business Partners. Ver docs/ARCHITECTURE.md para
+# el esquema completo y cómo agregar un dominio/origen nuevo.
+domain: business_partners
+source_type: sql
+credentials_section: sources.mssql_business_partners.credentials
+
+# Submodelo completo (docs/business-partners-schema.dbml):
+# 15 catálogos de referencia + la tabla central `business_partners`.
+tables:
+  - countries
+  - cities
+  - document_types
+  - organization_types
+  - tax_regimes
+  - marital_statuses
+  - partner_categories
+  - reference_lists
+  - economic_activities
+  - sales_zones
+  - sales_reps
+  - service_agents
+  - banks
+  - accounts
+  - partner_chains
+  - business_partners
+
+contract: contracts/business_partners.json
+rule_target_table: business_partners
+
+destination:
+  dataset: business_partners_data
+  # "replace" evita acumular duplicados en cada corrida del laboratorio;
+  # en producción, evaluar "merge" con primary_key + cursor incremental
+  # (timestamp/valido_desde) dado el volumen real de `business_partners`.
+  write_disposition: replace
+
+gold_views:
+  - resumen_ejecucion_business_partners
+
+# Orquestación en Airflow (opcional, ver docs/ARCHITECTURE.md sección
+# "Orquestación (Airflow)"). Igual principio que `contract`: omitir este
+# bloque no rompe nada -- el dominio simplemente queda con DAG de solo
+# extracción y disparo manual. Las fases de staging/marts las agrega la
+# DAG factory automáticamente si existen dbt/models/staging/<domain>/ y
+# dbt/models/marts/<domain>/ -- no hace falta declararlas aquí.
+orchestration:
+  schedule: null  # cron string, ej. "0 2 * * *"; null = solo trigger manual (piloto en el lab)

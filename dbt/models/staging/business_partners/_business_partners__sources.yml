@@ -1,0 +1,29 @@
+version: 2
+
+# Declara el dataset bronze que ya escribe dlt (sources/business_partners.yaml,
+# destination.dataset). No declarar columnas aquí: el contrato de columnas
+# vive en contracts/business_partners.json, del lado de dlt -- dbt solo
+# referencia las tablas para construir el linaje bronze -> staging.
+sources:
+  - name: business_partners_bronze
+    schema: business_partners_data
+    tables:
+      - name: business_partners
+        description: >
+          Tabla central del dominio Business Partners. Incluye las columnas
+          VALIDACION_* y estado_validacion_global/detalle_validacion
+          inyectadas por transforms/rule_engine.py en tiempo de carga.
+      - name: countries
+      - name: cities
+      - name: document_types
+      - name: organization_types
+      - name: tax_regimes
+      - name: marital_statuses
+      - name: partner_categories
+      - name: reference_lists
+      - name: economic_activities
+      - name: sales_zones
+      - name: sales_reps
+      - name: service_agents
+      - name: banks
+      - name: partner_chains

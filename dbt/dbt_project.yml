@@ -1,0 +1,29 @@
+# Proyecto dbt: capa silver (staging) y gold (marts) sobre el bronze que
+# escribe dlt. Ver docs/ARCHITECTURE.md sección "Capa de transformación
+# (dbt)" para el diseño completo y cómo agregar un dominio nuevo.
+name: "medallion_dbt"
+version: "1.0.0"
+config-version: 2
+profile: "medallion_dbt"
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Convención: una carpeta por dominio bajo staging/ y marts/, igual que
+# transforms/domains/<dominio>/ en el lado de dlt. +schema fija el dataset
+# de BigQuery exacto (ver macros/generate_schema_name.sql: el dataset no se
+# concatena con el del profile, se usa tal cual).
+models:
+  medallion_dbt:
+    staging:
+      business_partners:
+        +schema: staging_business_partners
+        +materialized: table
+    marts:
+      business_partners:
+        +schema: curated_business_partners
+        +materialized: table

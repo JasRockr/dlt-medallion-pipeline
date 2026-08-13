@@ -1,0 +1,180 @@
+{
+  "domain": "business_partners",
+  "source_table": "business_partners",
+  "version": "2.0",
+  "description": "Contrato declarativo del dominio Business Partners (docs/business-partners-schema.dbml) frente a las reglas de negocio (docs/REGLAS-NEGOCIO.md). Interpretado por el motor genérico transforms/rule_engine.py — ver docs/ARCHITECTURE.md para el esquema completo (fields/checks/groups).",
+  "fields": {
+    "partner_id": { "required": true, "aliases": [] },
+    "document_type": { "required": true, "aliases": [] },
+    "full_name": { "required": true, "aliases": [] },
+    "first_name": { "required": false, "aliases": [] },
+    "middle_name": { "required": false, "aliases": [] },
+    "last_name": { "required": false, "aliases": [] },
+    "second_last_name": { "required": false, "aliases": [] },
+    "is_individual": { "required": false, "aliases": [], "note": "Indicador 'Y' = persona natural / individuo, usado por el plugin de segmentación de nombres." },
+    "address": { "required": true, "aliases": [] },
+    "country": { "required": true, "aliases": [] },
+    "mobile_phone": { "required": false, "aliases": [] },
+    "email": { "required": false, "aliases": [] },
+    "created_by": { "required": false, "aliases": [], "note": "Columna operativa de auditoría, sin RN propia en el índice; se valida solo su limpieza de caracteres." },
+    "customer_segment": {
+      "required": true,
+      "aliases": [],
+      "available_in_source": false,
+      "status": "PENDING_SOURCE_MAPPING",
+      "note": "No existe columna equivalente en la tabla `business_partners` del esquema actual. Por decisión de negocio, RN-10 permanece activa: cada fila recibe ALERTA_CAMPO_NO_DISPONIBLE_EN_ORIGEN hasta que se identifique el campo de origen real (¿tabla nueva? ¿captura manual?). Este campo ilustra el patrón: un requisito de negocio puede declararse en el contrato antes de que exista una fuente real que lo alimente."
+    },
+    "tax_category": {
+      "required": true,
+      "aliases": [],
+      "available_in_source": false,
+      "status": "PENDING_SOURCE_MAPPING",
+      "note": "Existe un campo similar (`tax_regime`) en el esquema pero es conceptualmente distinto de 'categoría fiscal' (un código de responsabilidad tributaria homologado ante la autoridad fiscal), por lo que NO se usa como proxy. Cada fila recibe ALERTA_CAMPO_NO_DISPONIBLE_EN_ORIGEN hasta definir el origen real."
+    }
+  },
+
+  "groups": [
+    { "id": 1, "name": "IDENTIDAD_DOCUMENTACION", "stop_on_fail": true, "reglas": ["RN-01", "RN-02", "RN-03", "RN-04", "RN-05", "RN-06", "RN-07"] },
+    { "id": 2, "name": "HIGIENE_NOMBRES", "stop_on_fail": true, "reglas": ["RN-12", "RN-13"] },
+    { "id": 3, "name": "REQUERIMIENTOS_ENTIDADES", "stop_on_fail": true, "reglas": ["RN-08", "RN-09", "RN-10", "RN-11"], "note": "RN-10/RN-11 alertan (ver fields.*.available_in_source) pero el motor no las cuenta como fallo de grupo." },
+    { "id": 4, "name": "CONTACTABILIDAD", "stop_on_fail": true, "reglas": ["RN-14", "RN-15"] }
+  ],
+
+  "checks": [
+    {
+      "name": "VALIDACION_CARACTERES_PARTNER_ID",
+      "group": 1,
+      "inputs": ["partner_id"],
+      "rn": ["RN-01", "RN-02"],
+      "rules": [
+        { "op": "not_null", "error_code": "ERROR_VACIO" },
+        { "op": "not_in", "values": ["no", "si", "x", "v", "n/a", "na", ""], "error_code": "ERROR_COMODIN" },
+        { "op": "not_repeated_char", "error_code": "ERROR_COMODIN" },
+        { "op": "regex", "pattern": "^[A-Za-z0-9-]+$", "error_code": "ERROR_CARACTERES_INVALIDOS" }
+      ]
+    },
+    {
+      "name": "VALIDACION_DOC_ESTRUCTURA",
+      "group": 1,
+      "inputs": ["partner_id", "document_type"],
+      "rn": ["RN-03", "RN-04", "RN-05", "RN-06", "RN-07"],
+      "plugin": "transforms.domains.business_partners.plugins:validar_doc_estructura"
+    },
+    {
+      "name": "VALIDACION_CARACTERES_NOMBRE",
+      "group": 2,
+      "inputs": ["full_name", "first_name", "middle_name", "last_name", "second_last_name"],
+      "rn": [],
+      "rules": [
+        { "op": "regex", "pattern": "^[A-Za-zÀ-ÿ' .-]+$", "error_code": "ERROR_CARACTERES_INVALIDOS" }
+      ]
+    },
+    {
+      "name": "VALIDACION_NOMBRE",
+      "group": 2,
+      "inputs": ["full_name"],
+      "rn": ["RN-13"],
+      "rules": [
+        { "op": "not_null", "error_code": "ERROR_VACIO" },
+        { "op": "not_contains", "values": ["?"], "case_insensitive": false, "error_code": "ERROR_ENCODING" },
+        { "op": "not_contains", "values": ["no registra", "prueba", "test aa", "no usar"], "error_code": "ERROR_NOMBRE_PRUEBA" }
+      ]
+    },
+    {
+      "name": "VALIDACION_SEGMENTACION_NOMBRES",
+      "group": 2,
+      "inputs": ["is_individual", "first_name", "last_name"],
+      "rn": ["RN-12"],
+      "plugin": "transforms.domains.business_partners.plugins:validar_segmentacion_nombres"
+    },
+    {
+      "name": "VALIDACION_DIRECCION",
+      "group": 3,
+      "inputs": ["address"],
+      "rn": ["RN-08"],
+      "rules": [
+        { "op": "not_null", "error_code": "ERROR_DIRECCION_INSUFICIENTE" },
+        { "op": "length", "min": 8, "error_code": "ERROR_DIRECCION_INSUFICIENTE" }
+      ]
+    },
+    {
+      "name": "VALIDACION_PAIS",
+      "group": 3,
+      "inputs": ["country"],
+      "rn": ["RN-09"],
+      "rules": [{ "op": "not_null", "error_code": "ERROR_PAIS_VACIO" }]
+    },
+    {
+      "name": "VALIDACION_SEGMENTO",
+      "group": 3,
+      "inputs": ["customer_segment"],
+      "rn": ["RN-10"],
+      "rules": []
+    },
+    {
+      "name": "VALIDACION_CATEGORIA_FISCAL",
+      "group": 3,
+      "inputs": ["tax_category"],
+      "rn": ["RN-11"],
+      "rules": []
+    },
+    {
+      "name": "VALIDACION_CARACTERES_CELULAR",
+      "group": 4,
+      "inputs": ["mobile_phone"],
+      "rn": [],
+      "rules": [{ "op": "digits_only", "error_code": "ERROR_CARACTERES_INVALIDOS" }]
+    },
+    {
+      "name": "VALIDACION_CELULAR",
+      "group": 4,
+      "inputs": ["mobile_phone"],
+      "rn": ["RN-14"],
+      "rules": [
+        { "op": "not_null", "error_code": "ERROR_INVALIDO" },
+        { "op": "digits_only", "error_code": "ERROR_INVALIDO" },
+        { "op": "length", "eq": 10, "error_code": "ERROR_FORMATO" },
+        { "op": "starts_with", "prefix": "3", "error_code": "ERROR_FORMATO" }
+      ]
+    },
+    {
+      "name": "VALIDACION_CARACTERES_EMAIL",
+      "group": 4,
+      "inputs": ["email"],
+      "rn": [],
+      "rules": [{ "op": "no_spaces", "error_code": "ERROR_CARACTERES_INVALIDOS" }]
+    },
+    {
+      "name": "VALIDACION_EMAIL",
+      "group": 4,
+      "inputs": ["email"],
+      "rn": ["RN-15"],
+      "rules": [
+        { "op": "not_null", "error_code": "ERROR_VACIO" },
+        { "op": "regex", "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]{2,}$", "error_code": "ERROR_FORMATO" },
+        { "op": "not_ends_with", "values": [".como", ".con"], "error_code": "ERROR_DOMINIO_TYPO" },
+        { "op": "not_contains", "values": ["gamil", "0utlook", "hotmial", "yaho"], "error_code": "ERROR_DOMINIO_TYPO" }
+      ]
+    },
+    {
+      "name": "VALIDACION_CARACTERES_USUARIO",
+      "group": 4,
+      "inputs": ["created_by"],
+      "rn": [],
+      "rules": [{ "op": "regex", "pattern": "^[A-Za-z0-9._ -]+$", "error_code": "ERROR_CARACTERES_INVALIDOS" }]
+    }
+  ],
+
+  "document_type_dispatch": {
+    "11": { "descripcion": "Registro civil / partida de nacimiento", "familia": "GENERICO", "rn": null },
+    "12": { "descripcion": "Documento de identidad — menor de edad", "familia": "ID_NACIONAL", "rn": "RN-04" },
+    "13": { "descripcion": "Documento de identidad — adulto", "familia": "ID_NACIONAL", "rn": "RN-04" },
+    "21": { "descripcion": "Permiso de residencia — extranjero (tarjeta)", "familia": "RESIDENCIA_EXTRANJERA", "rn": "RN-06" },
+    "22": { "descripcion": "Permiso de residencia — extranjero (cédula)", "familia": "RESIDENCIA_EXTRANJERA", "rn": "RN-06" },
+    "31": { "descripcion": "Identificación tributaria de organización", "familia": "ID_TRIBUTARIO_ORG", "rn": "RN-03" },
+    "41": { "descripcion": "Pasaporte", "familia": "PASAPORTE", "rn": "RN-05" },
+    "42": { "descripcion": "Documento extranjero genérico", "familia": "RESIDENCIA_EXTRANJERA", "rn": "RN-06", "note": "Asimilado a RN-06 por similitud; no está nombrado explícitamente en el índice de REGLAS-NEGOCIO.md." },
+    "47": { "descripcion": "Permiso especial temporal — tipo A", "familia": "PERMISO_TEMPORAL", "rn": "RN-07" },
+    "48": { "descripcion": "Permiso especial temporal — tipo B", "familia": "PERMISO_TEMPORAL", "rn": "RN-07" }
+  }
+}
