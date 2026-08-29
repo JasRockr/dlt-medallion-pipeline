@@ -36,9 +36,10 @@ CASOS_SINTETICOS = [
         "ERROR", "IDENTIDAD_DOCUMENTACION",
     ),
     (
-        {"partner_id": "0054321", "document_type": "13", "full_name": "PRUEBA PRUEBA", "address": "SPRINGFIELD",
-         "country": 1, "is_individual": None, "first_name": "PRUEBA", "last_name": "PRUEBA",
-         "mobile_phone": "3040000000", "email": "test.placeholder@example.com", "created_by": "Ops Admin"},
+        {"partner_id": "0054321", "document_type": "13", "full_name": "PRUEBA PRUEBA",
+         "address": "SPRINGFIELD", "country": 1, "is_individual": None, "first_name": "PRUEBA",
+         "last_name": "PRUEBA", "mobile_phone": "3040000000",
+         "email": "test.placeholder@example.com", "created_by": "Ops Admin"},
         "ERROR", "HIGIENE_NOMBRES",
     ),
     (

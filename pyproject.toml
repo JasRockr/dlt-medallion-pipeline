@@ -1,0 +1,9 @@
+[tool.ruff]
+line-length = 110
+
+[tool.ruff.lint]
+# Selección conservadora y explícita a propósito: errores reales (imports
+# rotos, nombres no definidos, sintaxis), no preferencias de estilo. Sin
+# fijarlo, ruff activa un set amplio por defecto que cambia entre versiones
+# sin aviso.
+select = ["E", "F"]

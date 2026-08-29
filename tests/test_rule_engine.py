@@ -134,7 +134,8 @@ def test_valores_vacios_se_omiten_sin_not_null() -> None:
 
 def test_error_code_personalizado() -> None:
     contrato = _contrato(
-        [{"name": "V1", "group": 1, "inputs": ["a"], "rules": [{"op": "not_null", "error_code": "MI_ERROR"}]}],
+        [{"name": "V1", "group": 1, "inputs": ["a"],
+          "rules": [{"op": "not_null", "error_code": "MI_ERROR"}]}],
     )
     resultado = validar_row({"a": ""}, contrato)
     assert resultado["V1"] == "MI_ERROR"

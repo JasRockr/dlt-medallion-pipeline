@@ -12,9 +12,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-import dlt
-from dlt.sources.credentials import ConnectionStringCredentials
-from dlt.sources.sql_database import sql_database
+# Los imports de abajo van después de load_dotenv() a propósito: dlt lee
+# configuración (credenciales, destino) en tiempo de import, así que el
+# .env tiene que estar cargado antes de importar dlt o los módulos que lo
+# usan. Reordenar para contentar al linter rompe esa carga.
+import dlt  # noqa: E402
+from dlt.sources.credentials import ConnectionStringCredentials  # noqa: E402
+from dlt.sources.sql_database import sql_database  # noqa: E402
 
 # Misma sección de credenciales que sources/business_partners.yaml: esta
 # prueba de humo valida conectividad contra el mismo origen MSSQL, no uno aparte.

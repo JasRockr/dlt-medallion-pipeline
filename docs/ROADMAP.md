@@ -237,9 +237,10 @@ Nada acá cambia la arquitectura; todo se nota desde afuera del repo.
       *Aceptación:* GitHub muestra la licencia detectada en la barra lateral.
       *Cerrado 2026-08-29:* `LICENSE` (MIT, Json Rivera) agregado. Badges de
       licencia y Python 3.12+ agregados; el badge de CI queda pendiente de
-      F0.3 porque hoy no existe workflow ni remoto contra el cual apuntarlo.
+      F0.3 porque hoy no existe workflow de CI (el repo ya tiene remoto en
+      `github.com/JasRockr/dlt-medallion-pipeline`).
 
-- [ ] **F0.2 — Configuración de lint.** Crear `pyproject.toml` con ruff:
+- [x] **F0.2 — Configuración de lint.** Crear `pyproject.toml` con ruff:
       `line-length = 110` y `select = ["E", "F"]` — selección conservadora y
       explícita a propósito: errores reales (imports rotos, nombres no
       definidos, sintaxis), no preferencias de estilo. Sin fijarlo, ruff activa
@@ -249,6 +250,11 @@ Nada acá cambia la arquitectura; todo se nota desde afuera del repo.
       con comentario explicando por qué el import va después de la carga del
       `.env`, en vez de reordenar y romper la carga).
       *Aceptación:* `ruff check .` sale limpio.
+      *Cerrado 2026-08-29:* `pyproject.toml` con la config indicada. Import
+      sin usar (`Optional`) eliminado en la DAG factory; los 8 E402 de
+      `run_pipeline.py` y `smoke_test_connection.py` con `# noqa: E402` y
+      comentario explicando el porqué; las 2 líneas largas de los tests
+      partidas. `ruff check .` sale limpio y los 62 tests siguen en verde.
 
 - [ ] **F0.3 — CI mínimo** (`.github/workflows/ci.yml`), tres jobs:
       `lint` (ruff), `tests` (pytest), `validate-manifests` (F2.5, cuando
@@ -706,5 +712,5 @@ ejecutabilidad, pero F5.2 depende de tener la fuente A del demo en pie.
 - Repo verificado limpio de datos y nombres corporativos (§1.2).
 - 62 pruebas en verde, 11 hallazgos de lint, 44 archivos versionados, 1 commit,
   sin remoto configurado.
-- **F0.1 cerrado** (LICENSE + badges + one-liner). **F0.2 es el siguiente
-  paso.**
+- **F0.1 y F0.2 cerrados** (LICENSE + badges + one-liner; `pyproject.toml`
+  con ruff limpio). **F0.3 es el siguiente paso.**

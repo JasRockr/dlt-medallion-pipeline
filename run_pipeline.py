@@ -24,12 +24,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-import dlt
-import yaml
+# Los imports de abajo van después de load_dotenv() a propósito: dlt lee
+# configuración (credenciales, destino) en tiempo de import, así que el
+# .env tiene que estar cargado antes de importar dlt o los módulos que lo
+# usan. Reordenar para contentar al linter rompe esa carga.
+import dlt  # noqa: E402
+import yaml  # noqa: E402
 
-from transforms.bigquery_gold import crear_vista
-from transforms.contract_utils import construir_mapa_renombrado
-from transforms.rule_engine import apply_business_rules
+from transforms.bigquery_gold import crear_vista  # noqa: E402
+from transforms.contract_utils import construir_mapa_renombrado  # noqa: E402
+from transforms.rule_engine import apply_business_rules  # noqa: E402
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("run_pipeline")
