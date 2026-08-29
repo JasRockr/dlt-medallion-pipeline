@@ -1,5 +1,12 @@
 # PIPELINE DE DATOS: dlt + dbt + Airflow
 
+[![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-blue.svg)](LICENSE)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)](Dockerfile)
+
+> Proyecto de portafolio: pipeline medallion (bronze/silver/gold) con
+> ingesta vía dlt, transformación en dbt, orquestación en Airflow y un
+> motor de reglas de negocio declarativo.
+
 Pipeline de datos personal con arquitectura medallion completa: **dlt**
 extrae de MSSQL a BigQuery (bronze), **dbt** transforma (silver/staging,
 gold/marts), **Airflow** orquesta ambos, y un **motor de reglas de negocio
@@ -17,6 +24,7 @@ pensados para mostrar el patrón completo end-to-end de forma reproducible.
 
 | Quiero... | Leer |
 | --- | --- |
+| Saber qué falta por construir y en qué orden (estado y plan del proyecto) | [docs/ROADMAP.md](docs/ROADMAP.md) |
 | Entender el motor de reglas, la capa dbt y la DAG factory; agregar un dominio/regla/origen nuevo | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 | Configurar mi máquina y correr un pipeline de dlt localmente, paso a paso | [docs/COMMANDS-PIPELINE.md](docs/COMMANDS-PIPELINE.md) |
 | Ver comandos rápidos del día a día (dlt, dbt, Airflow) sin explicación | [docs/CHEATSHEET.md](docs/CHEATSHEET.md) |
