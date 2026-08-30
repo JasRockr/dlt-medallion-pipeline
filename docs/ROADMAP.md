@@ -256,10 +256,17 @@ Nada acá cambia la arquitectura; todo se nota desde afuera del repo.
       comentario explicando el porqué; las 2 líneas largas de los tests
       partidas. `ruff check .` sale limpio y los 62 tests siguen en verde.
 
-- [ ] **F0.3 — CI mínimo** (`.github/workflows/ci.yml`), tres jobs:
+- [x] **F0.3 — CI mínimo** (`.github/workflows/ci.yml`), tres jobs:
       `lint` (ruff), `tests` (pytest), `validate-manifests` (F2.5, cuando
       exista; hasta entonces omitir el job).
       *Aceptación:* PR contra `main` dispara los jobs y quedan en verde.
+      *Cerrado 2026-08-29:* jobs `lint` y `tests` agregados; `validate-manifests`
+      omitido con comentario explícito, tal como pide el ítem. `ruff` agregado
+      (pineado) a `requirements-dev.txt` — no estaba declarado en ningún
+      requirements pese a que `CLAUDE.md` y este roadmap ya instruían correrlo.
+      Los comandos exactos del workflow se corrieron en local con los mismos
+      resultados (`ruff check .` limpio, 62 tests en verde); falta confirmar
+      la primera corrida real en GitHub Actions una vez pusheado.
 
 - [ ] **F0.4 — Residuos de nomenclatura heredada.** En
       `airflow/dags/medallion_dag_factory.py`, los defaults de las Airflow
@@ -712,5 +719,6 @@ ejecutabilidad, pero F5.2 depende de tener la fuente A del demo en pie.
 - Repo verificado limpio de datos y nombres corporativos (§1.2).
 - 62 pruebas en verde, 11 hallazgos de lint, 44 archivos versionados, 1 commit,
   sin remoto configurado.
-- **F0.1 y F0.2 cerrados** (LICENSE + badges + one-liner; `pyproject.toml`
-  con ruff limpio). **F0.3 es el siguiente paso.**
+- **F0.1, F0.2 y F0.3 cerrados** (LICENSE + badges + one-liner;
+  `pyproject.toml` con ruff limpio; CI con jobs `lint`/`tests`).
+  **F0.4 es el siguiente paso.**
