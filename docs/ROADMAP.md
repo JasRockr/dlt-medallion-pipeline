@@ -265,16 +265,23 @@ Nada acá cambia la arquitectura; todo se nota desde afuera del repo.
       (pineado) a `requirements-dev.txt` — no estaba declarado en ningún
       requirements pese a que `CLAUDE.md` y este roadmap ya instruían correrlo.
       Los comandos exactos del workflow se corrieron en local con los mismos
-      resultados (`ruff check .` limpio, 62 tests en verde); falta confirmar
-      la primera corrida real en GitHub Actions una vez pusheado.
+      resultados (`ruff check .` limpio, 62 tests en verde), y la primera
+      corrida real en GitHub Actions tras el push quedó en verde.
 
-- [ ] **F0.4 — Residuos de nomenclatura heredada.** En
+- [x] **F0.4 — Residuos de nomenclatura heredada.** En
       `airflow/dags/medallion_dag_factory.py`, los defaults de las Airflow
       Variables `vm01_project_root` / `vm01_python_bin` apuntan a una ruta con
       nombre heredado de un sandbox anterior (`/opt/test-dlt-py`). Cambiar a
       `/opt/dlt-medallion-pipeline` y su venv. Revisar de paso que
       `_build_extract_task()` no reciba parámetros que no usa.
       *Aceptación:* `grep -ri "test-dlt-py" .` no devuelve nada.
+      *Cerrado 2026-08-29:* ambos defaults actualizados a
+      `/opt/dlt-medallion-pipeline`. `_build_extract_task()` recibía `domain`
+      sin usarlo en el cuerpo de la función; parámetro y argumento en el
+      call site eliminados. `ruff check .` limpio, 62 tests en verde. El
+      grep de aceptación ya no encuentra la cadena en código; las dos
+      coincidencias que quedan son la descripción de este mismo ítem en el
+      roadmap, no una referencia viva.
 
 - [ ] **F0.5 — Consistencia de la capa dbt.** El manifiesto extrae 16 tablas
       pero `dbt/models/staging/business_partners/_business_partners__sources.yml`
@@ -719,6 +726,6 @@ ejecutabilidad, pero F5.2 depende de tener la fuente A del demo en pie.
 - Repo verificado limpio de datos y nombres corporativos (§1.2).
 - 62 pruebas en verde, 11 hallazgos de lint, 44 archivos versionados, 1 commit,
   sin remoto configurado.
-- **F0.1, F0.2 y F0.3 cerrados** (LICENSE + badges + one-liner;
-  `pyproject.toml` con ruff limpio; CI con jobs `lint`/`tests`).
-  **F0.4 es el siguiente paso.**
+- **F0.1 a F0.4 cerrados** (LICENSE + badges + one-liner; `pyproject.toml`
+  con ruff limpio; CI en verde con jobs `lint`/`tests`; nomenclatura
+  heredada corregida en la DAG factory). **F0.5 es el siguiente paso.**

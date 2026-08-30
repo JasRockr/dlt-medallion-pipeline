@@ -59,9 +59,9 @@ def _cargar_manifest(manifest_path: Path) -> Dict[str, Any]:
     return yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
 
 
-def _build_extract_task(dag: DAG, domain: str, manifest_relpath: str) -> SSHOperator:
-    project_root = _var("vm01_project_root", "/opt/test-dlt-py")
-    python_bin = _var("vm01_python_bin", "/opt/test-dlt-py/dlt_env/bin/python")
+def _build_extract_task(dag: DAG, manifest_relpath: str) -> SSHOperator:
+    project_root = _var("vm01_project_root", "/opt/dlt-medallion-pipeline")
+    python_bin = _var("vm01_python_bin", "/opt/dlt-medallion-pipeline/dlt_env/bin/python")
     command = f"cd {project_root} && {python_bin} run_pipeline.py --manifest {manifest_relpath}"
 
     return SSHOperator(
@@ -102,7 +102,7 @@ def _build_dag(manifest_path: Path) -> DAG:
     )
 
     with dag:
-        extract = _build_extract_task(dag, domain, manifest_relpath)
+        extract = _build_extract_task(dag, manifest_relpath)
         upstream = extract
 
         if (DBT_MODELS_DIR / "staging" / domain).is_dir():
