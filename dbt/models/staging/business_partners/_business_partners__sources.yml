@@ -26,4 +26,10 @@ sources:
       - name: sales_reps
       - name: service_agents
       - name: banks
+      - name: accounts
+        description: >
+          Sin columna descriptiva en el esquema (ver
+          docs/business-partners-schema.dbml): se extrae a bronze y se
+          referencia en el staging (account_id), pero no participa del
+          left join de enriquecimiento como los demás catálogos.
       - name: partner_chains

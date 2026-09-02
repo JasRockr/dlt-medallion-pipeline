@@ -283,13 +283,21 @@ Nada acá cambia la arquitectura; todo se nota desde afuera del repo.
       coincidencias que quedan son la descripción de este mismo ítem en el
       roadmap, no una referencia viva.
 
-- [ ] **F0.5 — Consistencia de la capa dbt.** El manifiesto extrae 16 tablas
+- [x] **F0.5 — Consistencia de la capa dbt.** El manifiesto extrae 16 tablas
       pero `dbt/models/staging/business_partners/_business_partners__sources.yml`
       declara 15: falta `accounts`. Decidir y dejar escrito **una** de las dos:
       declararla como source aunque no se use en ningún join, o dejar un
       comentario explícito de por qué se extrae a bronze y no se declara.
       *Aceptación:* el conteo de tablas del manifiesto y el de `sources.yml`
       coinciden, o hay un comentario que justifica la diferencia.
+      *Cerrado 2026-08-30:* `accounts` **sí** se usaba ya en el staging
+      (`bp.account_id`, sin enriquecer porque el catálogo no tiene columna
+      descriptiva — eso ya estaba documentado en el `.sql`); lo que faltaba
+      era declararla como `source()` en `sources.yml`, que es lo que
+      determina el lineage bronze visible en la documentación de dbt.
+      Se declaró con una descripción que remite al porqué no participa del
+      join de enriquecimiento. Conteo 16/16 verificado; YAML válido; 62
+      tests en verde.
 
 - [ ] **F0.6 — Reencuadre narrativo.** Varios documentos hablan del proyecto
       como si fuera un encargo interno: "migrar a producción (Workspace
@@ -726,6 +734,7 @@ ejecutabilidad, pero F5.2 depende de tener la fuente A del demo en pie.
 - Repo verificado limpio de datos y nombres corporativos (§1.2).
 - 62 pruebas en verde, 11 hallazgos de lint, 44 archivos versionados, 1 commit,
   sin remoto configurado.
-- **F0.1 a F0.4 cerrados** (LICENSE + badges + one-liner; `pyproject.toml`
+- **F0.1 a F0.5 cerrados** (LICENSE + badges + one-liner; `pyproject.toml`
   con ruff limpio; CI en verde con jobs `lint`/`tests`; nomenclatura
-  heredada corregida en la DAG factory). **F0.5 es el siguiente paso.**
+  heredada corregida en la DAG factory; `accounts` declarada en
+  `sources.yml`). **F0.6 es el siguiente paso.**
