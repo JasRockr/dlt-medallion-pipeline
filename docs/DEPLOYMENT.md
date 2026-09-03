@@ -82,8 +82,8 @@ VBoxManage list bridgedifs | Select-String "^Name:"
 
 Usa el nombre exacto que aparezca (ej. `Wi-Fi`, `Ethernet`) en el paso 3 --
 es el adaptador que le da a VM-01 la misma ruta de red que tiene el host
-(LAN corporativa o VPN), para que alcance el SQL Server real igual que lo
-hace hoy la máquina local.
+(red privada o VPN), para que alcance el origen MSSQL igual que lo hace
+hoy la máquina local.
 
 **Por GUI:** no es un paso separado -- el nombre de la interfaz física
 aparece directamente en el menú desplegable al configurar la red de VM-01
@@ -195,9 +195,9 @@ usa más abajo en "Llave SSH hacia VM-01" y en el checklist final), y el
 resto de esta guía aplica igual desde aquí.
 
 **Modo alterno sin LAN/VPN real:** si en este punto no hay forma de
-alcanzar el SQL Server real desde VM-01 (LAN corporativa no disponible,
-sin VPN), la alternativa validada es levantar SQL Server en un contenedor
-Docker con datos sintéticos dentro de la propia VM-01.
+alcanzar el origen MSSQL desde VM-01 (sin red privada ni VPN disponibles),
+la alternativa validada es levantar SQL Server en un contenedor Docker con
+datos sintéticos dentro de la propia VM-01.
 
 ## VM-01: extracción (dlt)
 
@@ -312,7 +312,7 @@ Docker con datos sintéticos dentro de la propia VM-01.
 | Red entre VMs | Adaptador Bridged (VM-01, hereda LAN/VPN del host) + Host-only (VM-01↔VM-02) | VPC real de GCP, reglas de firewall por IP interna |
 | ADC | `gcloud auth application-default login` manual por VM, cuenta personal | Service account adjunta a la instancia GCE, ADC automático vía metadata server, sin login manual |
 | Service accounts | No son necesarias (el usuario es Admin de su propio proyecto de prueba) | 2 SAs dedicadas con permisos acotados (una por VM, alcance mínimo: bronze-write en VM-01, staging/curated-write en VM-02) |
-| Origen MSSQL | LAN corporativa/VPN desde el host, o contenedor Docker con SQL Server para modo aislado | Conectividad de red definida por la topología real de la organización |
+| Origen MSSQL | Red privada/VPN desde el host, o contenedor Docker con SQL Server para modo aislado | Conectividad de red definida por la topología de red que se elija en producción |
 
 Para la checklist de la capa de datos (no infraestructura): `docs/COMMANDS-PIPELINE.md` sección "Checklist para migrar a producción".
 

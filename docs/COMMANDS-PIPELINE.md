@@ -1,8 +1,9 @@
 # Flujo de Datos con Python + dlt (Data Load Tools)
 
 Pipeline MSSQL → BigQuery, pensado para reproducirse paso a paso desde cero
-(entorno free/personal de GCP) y migrar después a un entorno corporativo real
-sin cambios de código.
+(entorno free/personal de GCP) y llevarse después a un entorno productivo
+con controles más estrictos (red privada, gestor de secretos, roles
+acotados) sin cambios de código.
 
 Esta guía es para una **máquina de desarrollo** (correr/probar el pipeline
 localmente). Para provisionar las VMs reales (VM-01/VM-02, laboratorio o
@@ -159,9 +160,8 @@ if __name__ == "__main__":
 Un error típico en proyectos de GCP con la política de organización
 `iam.disableServiceAccountKeyCreation` activa: Google bloquea la descarga de
 claves JSON de cuenta de servicio por seguridad. Esta política es además un
-default de seguridad cada vez más común, así que el entorno corporativo real
-probablemente la tendrá igual — conviene construir el pipeline sin depender
-de claves desde el día uno.
+default de seguridad cada vez más común en entornos productivos — conviene
+construir el pipeline sin depender de claves desde el día uno.
 
 `dlt`'s `GcpServiceAccountCredentials` cae automáticamente a
 `google.auth.default()` (ADC) cuando `private_key`/`client_email` no están
@@ -418,7 +418,7 @@ docker compose exec airflow-webserver airflow variables set vm01_project_root /r
 
 ---
 
-## Checklist para migrar a producción (Workspace corporativo)
+## Checklist para migrar a producción
 
 Este checklist es sobre la **capa de datos** (dlt/contratos/credenciales).
 Para las diferencias de **infraestructura** entre el laboratorio en

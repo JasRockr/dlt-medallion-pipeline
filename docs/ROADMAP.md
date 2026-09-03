@@ -82,10 +82,11 @@ servidores, IPs, project IDs, correos, nombres de usuario):
    auto-referenciales no se pueden reflejar con SQLAlchemy y hoy la decisión es
    *excluirlas del manifiesto*. Es la debilidad más visible del repo para un
    lector técnico. Hay solución conocida (§5, F5).
-6. **Sin CI, sin lint configurado, sin licencia.** `ruff check --select E,F
-   --line-length 110` reporta **11 hallazgos** (E501 y orden de imports),
-   todos triviales. Un solo commit squash, sin remoto.
-7. **Residuos menores de nomenclatura y consistencia** (F0.4, F0.5).
+6. ~~Sin CI, sin lint configurado, sin licencia.~~ **Resuelto en F0 (cerrado
+   2026-09-02):** `LICENSE`, `pyproject.toml` con ruff limpio, CI en verde
+   (`lint` + `tests`), remoto en `github.com/JasRockr/dlt-medallion-pipeline`.
+7. ~~Residuos menores de nomenclatura y consistencia.~~ **Resuelto en F0.4 y
+   F0.5.**
 
 ---
 
@@ -299,7 +300,7 @@ Nada acá cambia la arquitectura; todo se nota desde afuera del repo.
       join de enriquecimiento. Conteo 16/16 verificado; YAML válido; 62
       tests en verde.
 
-- [ ] **F0.6 — Reencuadre narrativo.** Varios documentos hablan del proyecto
+- [x] **F0.6 — Reencuadre narrativo.** Varios documentos hablan del proyecto
       como si fuera un encargo interno: "migrar a producción (Workspace
       corporativo)", "LAN corporativa", "el SQL Server real"
       (`docs/COMMANDS-PIPELINE.md` §421, `docs/DEPLOYMENT.md` líneas 85, 198,
@@ -309,6 +310,14 @@ Nada acá cambia la arquitectura; todo se nota desde afuera del repo.
       condicional y sin dueño implícito.
       *Aceptación:* `grep -rniE "corporativ|el SQL Server real" docs/` no
       devuelve nada que implique un empleador.
+      *Cerrado 2026-09-02:* los 6 pasajes reescritos — "entorno corporativo
+      real" → "entorno productivo con controles más estrictos"; "Workspace
+      corporativo" eliminado del título del checklist; "LAN corporativa" →
+      "red privada"; "el SQL Server real" → "el origen MSSQL" (consistente
+      con como se lo llama en el resto del repo); "topología real de la
+      organización" → "topología de red que se elija en producción". El
+      grep de aceptación ya no encuentra nada fuera de esta misma entrada
+      del roadmap.
 
 ---
 
@@ -732,9 +741,11 @@ ejecutabilidad, pero F5.2 depende de tener la fuente A del demo en pie.
 ## 9. Cómo quedó el estado al cerrar la sesión de análisis
 
 - Repo verificado limpio de datos y nombres corporativos (§1.2).
-- 62 pruebas en verde, 11 hallazgos de lint, 44 archivos versionados, 1 commit,
-  sin remoto configurado.
-- **F0.1 a F0.5 cerrados** (LICENSE + badges + one-liner; `pyproject.toml`
-  con ruff limpio; CI en verde con jobs `lint`/`tests`; nomenclatura
-  heredada corregida en la DAG factory; `accounts` declarada en
-  `sources.yml`). **F0.6 es el siguiente paso.**
+- 62 pruebas en verde, remoto en `github.com/JasRockr/dlt-medallion-pipeline`.
+- **F0 completo (F0.1 a F0.6 cerrados, 2026-09-02):** LICENSE + badges +
+  one-liner; `pyproject.toml` con ruff limpio; CI en verde con jobs
+  `lint`/`tests`; nomenclatura heredada corregida en la DAG factory;
+  `accounts` declarada en `sources.yml`; pasajes de narrativa corporativa
+  reescritos en `COMMANDS-PIPELINE.md` y `DEPLOYMENT.md`.
+  **F1 (entorno demo ejecutable) es el siguiente paso** — ver F1.1 en §5,
+  la fase de mayor retorno del roadmap.
